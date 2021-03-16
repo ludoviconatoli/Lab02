@@ -61,7 +61,7 @@
    <bottom>
       <VBox prefHeight="188.0" prefWidth="466.0" BorderPane.alignment="CENTER">
          <children>
-            <TextArea fx:id="txtResult" prefHeight="155.0" prefWidth="466.0" promptText="Welcome to Alien Dictionary v2021" />
+            <TextArea fx:id="txtResult" editable="false" prefHeight="155.0" prefWidth="466.0" promptText="Welcome to Alien Dictionary v2021" />
             <Button fx:id="btClearText" contentDisplay="CENTER" mnemonicParsing="false" onAction="#doReset" text="Clear Text">
                <VBox.margin>
                   <Insets left="370.0" top="10.0" />

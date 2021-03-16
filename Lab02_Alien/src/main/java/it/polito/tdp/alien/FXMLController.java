@@ -1,6 +1,8 @@
 package it.polito.tdp.alien;
 
 import java.net.URL;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import it.polito.tdp.alien.AlienDictionary;
@@ -63,21 +65,25 @@ public class FXMLController {
     				return;
     			}
     	
-    	if(parole.length == 1 && parole[0].matches("[a-zA-Z]*"))
+    	if(parole.length == 1 && parole[0].matches("[a-zA-Z]+"))
     	{
-    		String st = ad.translateWord(parole[0]);
-    		if(st != null)
+    		String s = this.ad.translateWord(parole[0]);
+    		if(s != null)
     		{
-    			txtResult.setText(st);
+    			txtResult.setText(s);
     			return;
     		}
     		txtResult.setText("La parola non è presente nel dizionario");
     		return;
     	}
     	
-    	if(parole.length == 2)
+    	if(parole.length > 1)
     	{
-    		this.ad.addWord(parole[0], parole[1]);
+    		LinkedList<String> s = new LinkedList<String>();
+    		for(int i=1; i<parole.length; i++)
+    			s.add(parole[i]);
+    		
+    		this.ad.addWord(parole[0], s);
     		txtResult.setText("Parola aggiunta al dizionario");
     		return;
     	}
