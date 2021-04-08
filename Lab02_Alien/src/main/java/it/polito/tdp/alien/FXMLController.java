@@ -47,49 +47,69 @@ public class FXMLController {
     @FXML
     void doTranslate(ActionEvent event) {
     	
-    	String[] parole =  txtAnswer.getText().toLowerCase().split(" ");
-    	
-    	for(int i=0; i<parole.length; i++)
-    		for(int j=0; j<vetNum.length; j++)
-    			if(parole[i].contains(vetNum[j]))
-    			{
-    				txtResult.setText("Le parole non possono contenere numeri");
-    				return;
-    			}
-    	
-    	for(int i=0; i<parole.length; i++)
-    		for(int j=0; j<carSpeciali.length; j++)
-    			if(parole[i].contains(carSpeciali[j]))
-    			{
-    				txtResult.setText("Le parole non possono contenere caratteri speciali");
-    				return;
-    			}
-    	
-    	if(parole.length == 1 && parole[0].matches("[a-zA-Z]+"))
-    	{
-    		String s = this.ad.translateWord(parole[0]);
-    		if(s != null)
-    		{
-    			txtResult.setText(s);
-    			return;
-    		}
-    		txtResult.setText("La parola non è presente nel dizionario");
-    		return;
-    	}
-    	
-    	if(parole.length > 1)
-    	{
-    		LinkedList<String> s = new LinkedList<String>();
-    		for(int i=1; i<parole.length; i++)
-    			s.add(parole[i]);
-    		
-    		this.ad.addWord(parole[0], s);
-    		txtResult.setText("Parola aggiunta al dizionario");
-    		return;
-    	}
-    	
-    	txtResult.setText("Devi inserire almeno una parola");
-    	return;
+		txtResult.clear();
+		String riga = this.txtAnswer.getText().toLowerCase();
+
+		// Controllo sull'input
+		if (riga == null || riga.length() == 0) {
+			txtResult.setText("Inserire una o due parole.");
+			return;
+		}
+
+		String[] st = riga.split(" ");
+		
+		/* Controllo su String Tokenizer (superfluo)
+		if (!st.hasMoreElements()) {
+			txtResult.setText("Inserire una o due parole.");
+			return;
+		}*/
+
+		// Estraggo la prima parola
+		String alienWord = st[0];
+
+		if (st.length > 1) {
+			// Devo inserire nel dizionario
+
+			// Estraggo la seconda parola
+			String translation = st[1];
+
+			if (!alienWord.matches("[a-zA-Z]*") || !translation.matches("[a-zA-Z]*")) {
+				txtResult.setText("Inserire solo caratteri alfabetici.");
+				return;
+			}
+
+			// Aggiungo la parola aliena e traduzione nel dizionario
+			ad.addWord(alienWord, translation);
+
+			txtResult.setText("La parola: " + alienWord + " traduzione: " + translation + " è stata inserita.");
+
+		} else {
+
+			// Controllo che non ci siano caratteri non ammessi
+			if (!alienWord.matches("[a-zA-Z?]*")) {
+				txtResult.setText("Inserire solo caratteri alfabetici.");
+				return;
+			}
+
+			String translation;
+
+			if (alienWord.matches("[a-zA-Z?]*") && !alienWord.matches("[a-zA-Z]*")) {
+
+				// Traduzione con WildCard
+				translation = ad.translateWordWildCard(alienWord);
+
+			} else {
+
+				// Traduzione classica
+				translation = ad.translateWord(alienWord);
+			}
+
+			if (translation != null) {
+				txtResult.setText(translation);
+			} else {
+				txtResult.setText("La parola cercata non esiste nel dizionario.");
+			}
+		}
     }
 
     @FXML

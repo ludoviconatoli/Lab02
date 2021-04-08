@@ -1,52 +1,59 @@
 package it.polito.tdp.alien;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 public class AlienDictionary {
-	
-	ArrayList<WordEnhanced> dizionario;
-	
+
+	private List<WordEnhanced> dictionary;
+
 	public AlienDictionary() {
-		this.dizionario = new ArrayList<WordEnhanced>();
+		dictionary = new ArrayList<WordEnhanced>();
 	}
 	
-	public String cercaParola(String alienWord) {
-		for(WordEnhanced w: this.dizionario)
-			if(w.getAlienWord().equals(alienWord))
-				return w.getAlienWord();
-		
+	public void resetDictionary(){
+		dictionary.clear();
+	}
+	
+	public void addWord(String alien, String trans) {
+		WordEnhanced w = new WordEnhanced(alien);
+		if (dictionary.contains(w)) {
+			dictionary.get(dictionary.indexOf(w)).setTranslation(trans);
+			return;
+		}
+		w.setTranslation(trans);
+		dictionary.add(w);
+	}
+
+	public String translateWord(String alien) {
+		WordEnhanced we = new WordEnhanced(alien);
+		if (dictionary.contains(we))
+			return dictionary.get(dictionary.indexOf(we)).getTranslation();
 		return null;
 	}
-	
-	public void addWord(String alienWord, LinkedList<String> translation) {
-		
-		int p = 0;
-		for(WordEnhanced w: this.dizionario)
-		{
-			if(w.getAlienWord().equals(alienWord))
-			{
-				w.setTranslation(translation);
-				p++;		
+
+	public String translateWordWildCard(String alienWildCard) {
+
+		// Utilizzo le regular expression di Java (posso usare stringa.matches())
+		// Sostituisco "?" con "."
+		// "." nelle regex indica un qualsiasi carattere
+		alienWildCard = alienWildCard.replaceAll("\\?", ".");
+
+		int matchCounter = 0;
+		StringBuilder sb = new StringBuilder();
+
+		for (WordEnhanced w : dictionary) {
+			if (w.compareWild(alienWildCard)) {
+				matchCounter++;
+				sb.append(w.getTranslation() + "\n");
 			}
 		}
-		if( p == 0)
-		{
-			WordEnhanced we = new WordEnhanced(alienWord);
-			we.setTranslation(translation);
-			this.dizionario.add(we);
-		}
-	}
-	
-	public String translateWord(String alienWord) {
 		
-		for(WordEnhanced w: this.dizionario)
-		{	
-			if(w.getAlienWord().equals(alienWord))
-				return w.toString();
-		}
-		return null;
-	}
+		if (matchCounter != 0)
+			return sb.toString();
+		else
+			return null;
+	}	
+	
 	
 }
